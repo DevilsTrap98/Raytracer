@@ -1,0 +1,72 @@
+    // calculate bounding box test
+    // decides whether the ray s(t)=rayE+t*rayV intersects the axis aligned
+    // bounding box of object -> return value true
+    // six plane intersections with rectangle inside tests; if one succeeds
+    // bounding box is hit
+    private boolean bboxHit(RT_Object object, float rayEx, float rayEy, float rayEz, float rayVx, float rayVy, float rayVz) {
+	float t;
+	float ip[] = new float[3];
+
+	// front and back
+	if (Math.abs(rayVz) > 1E-5) {
+	    // front xy
+	    t = (object.max[2] - rayEz) / rayVz;
+
+	    ip[0] = rayEx + t * rayVx;
+	    ip[1] = rayEy + t * rayVy;
+
+	    if (ip[0] > object.min[0] && ip[0] < object.max[0] && ip[1] > object.min[1] && ip[1] < object.max[1])
+		return true;
+
+	    // back xy
+	    t = (object.min[2] - rayEz) / rayVz;
+
+	    ip[0] = rayEx + t * rayVx;
+	    ip[1] = rayEy + t * rayVy;
+
+	    if (ip[0] > object.min[0] && ip[0] < object.max[0] && ip[1] > object.min[1] && ip[1] < object.max[1])
+		return true;
+	}
+
+	// left and right
+	if (Math.abs(rayVx) > 1E-5) {
+	    // left yz
+	    t = (object.min[0] - rayEx) / rayVx;
+
+	    ip[1] = rayEy + t * rayVy;
+	    ip[2] = rayEz + t * rayVz;
+
+	    if (ip[1] > object.min[1] && ip[1] < object.max[1] && ip[2] > object.min[2] && ip[2] < object.max[2])
+		return true;
+
+	    // right yz
+	    t = (object.max[0] - rayEx) / rayVx;
+
+	    ip[1] = rayEy + t * rayVy;
+	    ip[2] = rayEz + t * rayVz;
+
+	    if (ip[1] > object.min[1] && ip[1] < object.max[1] && ip[2] > object.min[2] && ip[2] < object.max[2])
+		return true;
+	}
+	// top and bottom
+	if (Math.abs(rayVy) > 1E-5) {
+	    // top xz
+	    t = (object.min[1] - rayEy) / rayVy;
+
+	    ip[0] = rayEx + t * rayVx;
+	    ip[2] = rayEz + t * rayVz;
+
+	    if (ip[0] > object.min[0] && ip[0] < object.max[0] && ip[2] > object.min[2] && ip[2] < object.max[2])
+		return true;
+
+	    // top xz
+	    t = (object.max[1] - rayEy) / rayVy;
+
+	    ip[0] = rayEx + t * rayVx;
+	    ip[2] = rayEz + t * rayVz;
+
+	    if (ip[0] > object.min[0] && ip[0] < object.max[0] && ip[2] > object.min[2] && ip[2] < object.max[2])
+		return true;
+	}
+	return false;
+    }
