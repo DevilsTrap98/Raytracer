@@ -1,8 +1,0 @@
-		    // intermediate version
-		    // calculate normal n and triangle area a
-//		    n = new float[3];
-//		    a = calculateN(n, p1, p2, p3);
-		    
-		    // fetch precalculated face areas and face normals
-		    a = mesh.triangleAreas[i];
-		    n = mesh.triangleNormals[i];
