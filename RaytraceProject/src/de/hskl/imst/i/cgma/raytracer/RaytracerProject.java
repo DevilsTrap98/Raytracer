@@ -81,7 +81,7 @@ public class RaytracerProject implements IRayTracerImplementation {
 		prepareMeshData();
 
 		// hardcoded viewing volume with fovy and near
-		setViewParameters(90.0f, 1.0f);
+		setViewParameters(90.0f, 1.0f); // TODO: change eye/near for image composition?
 		// set eye point
 		rayEx = 0;
 		rayEy = 0;
@@ -94,7 +94,7 @@ public class RaytracerProject implements IRayTracerImplementation {
 
 		Random rd = new Random();
 		// xp, yp: pixel coordinates
-		for (int yp = resy; yp >= 0; --yp) {
+		for (int yp = resy - 1; yp >= 0; --yp) {
 			for (int xp = 0; xp < resx; ++xp) {
 				// for demo purposes
 				// gui.setPixel(xp, yp, Color.WHITE.getRGB());
@@ -123,6 +123,7 @@ public class RaytracerProject implements IRayTracerImplementation {
 		}
 	}
 
+	// returns Color object or null if no intersection was found
 	private Color traceRayAndGetColor(float rayEx, float rayEy, float rayEz, float rayVx, float rayVy, float rayVz) {
 		// RTFile scene = gui.getFile();
 
@@ -215,9 +216,9 @@ public class RaytracerProject implements IRayTracerImplementation {
 				minIP[2] = rayEz + t * rayVz;
 
 				// the normal vector at the intersection point
-				minN[0] = -sphere.center[0] + minIP[0];
-				minN[1] = -sphere.center[1] + minIP[1];
-				minN[2] = -sphere.center[2] + minIP[2];
+				minN[0] = minIP[0] - sphere.center[0];
+				minN[1] = minIP[1] - sphere.center[1];
+				minN[2] = minIP[2] - sphere.center[2];
 
 				normalize(minN);
 
@@ -250,11 +251,6 @@ public class RaytracerProject implements IRayTracerImplementation {
 					p2 = mesh.vertices[mesh.triangles[i][1]];
 					p3 = mesh.vertices[mesh.triangles[i][2]];
 
-					// intermediate version
-					// calculate normal n and triangle area a
-					// n = new float[3];
-					// a = calculateN(n,p1,p2,p3);
-
 					// fetch precalculated face areas and face normals
 					a = mesh.triangleAreas[i];
 					n = mesh.triangleNormals[i];
@@ -269,10 +265,10 @@ public class RaytracerProject implements IRayTracerImplementation {
 					if (Math.abs(rayVn) < 1E-7)
 						continue;
 
-					pen = p1[0] * n[0] + p1[1] * n[1] + p1[2] * n[2];
+					pen = (p1[0] - rayEx) * n[0] + (p1[1] - rayEy) * n[1] + (p1[2] - rayEz) * n[2];
 
 					// calculate intersection point with plane along the ray
-					t = pen / (float) (rayVx * n[0] + rayVy * n[1] + rayVz * n[2]);
+					t = pen / rayVn;
 
 					// already a closer intersection point? => next triangle
 					if (t >= minT)
@@ -323,7 +319,7 @@ public class RaytracerProject implements IRayTracerImplementation {
 						case 'G':
 							// remember barycentric coordinates bu, bv, bw for shading
 							bu = ai[0] / a;
-							bv = ai[1] / a; // Richtig?
+							bv = ai[1] / a;
 							bw = ai[2] / a;
 
 							break;
