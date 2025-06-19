@@ -1,0 +1,23 @@
+# Header
+TRIANGLE_MESH
+
+# Dateiinformationen
+6 2 2 f
+
+# Materialien
+#  ambient      diffuse        specular    n
+# r_a g_a b_a    r_d g_d b_d    r_s g_s b_s   n 
+0.15 0.15 0.15   0.0 0.8 0.0    0.8 0.8 0.8   10
+0.15 0.15 0.15   0.0 0.0 0.8    0.8 0.8 0.8   10
+
+# Vertexdaten
+-0.5 -0.5 -1.0 0
+0.5 -0.5 -2.0 0
+-0.5 0.5 -2.0 0
+0.0 -0.5 -1.5 1
+1.0 -0.5 -1.5 1
+0.0 0.5 -1.5 1
+# Dreiecke
+3 4 5
+0 1 2
+

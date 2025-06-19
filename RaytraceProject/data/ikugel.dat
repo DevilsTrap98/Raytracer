@@ -1,0 +1,7 @@
+IMPLICIT_SPHERE
+
+# r_a g_a b_a    r_d g_d b_d    r_s g_s b_s   n 
+0.15 0.15 0.15   0.8 0.0 0.0    0.8 0.8 0.8   10
+
+# cx cy cz    r
+0.0 0.0 -3.0  1.0
