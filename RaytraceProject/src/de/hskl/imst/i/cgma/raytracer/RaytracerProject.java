@@ -57,14 +57,14 @@ public class RaytracerProject implements IRayTracerImplementation {
 
 	public void setViewParameters(float fovyDegree, float near) {
 		// set attributes fovyDegree, fovyRadians, near
-		fovyRadians = fovyDegree * (float) Math.PI / 180;
+		this.fovyRadians = fovyDegree * (float) Math.PI / 180;
 		this.fovyDegree = fovyDegree;
 		this.near = near;
 
 		// set attributes resx, resy, aspect
 		resx = gui.getResX();
 		resy = gui.getResY();
-		aspect = (float) resx / resy;
+		aspect = (float) resx / (float) resy;
 
 		// set attributes h, w
 		h = 2 * near * (float) Math.tan(fovyRadians / 2.0);
@@ -84,16 +84,19 @@ public class RaytracerProject implements IRayTracerImplementation {
 		// hardcoded viewing volume with fovy and near
 		setViewParameters(90.0f, 1.0f); // TODO: change eye/near for image composition?
 		// set eye point
-		rayEx = 0;
-		rayEy = 0;
-		rayEz = 0;
+
+		rayEx = 0.0f;
+		rayEy = 0.0f;
+		// TODO: Auge nach oben bewegen?
+		rayEz = 0.0f;
 
 		z = -near;
 		Color color;
 
+		// prepare mesh data for shading
 		precalculateMeshDataShading();
 
-		Random rd = new Random();
+		// Random rd = new Random();
 		// xp, yp: pixel coordinates
 		for (int yp = resy - 1; yp >= 0; --yp) {
 			for (int xp = 0; xp < resx; ++xp) {
@@ -103,8 +106,9 @@ public class RaytracerProject implements IRayTracerImplementation {
 				// rd.nextFloat()).getRGB());
 
 				// x, y: view coordinates
-				x = (float) xp / (resx - 1) * w - w / 2f;
-				y = (float) ((resy - 1) - yp) / (resy - 1) * h - h / 2f;
+				x = xp / (float) (resx - 1) * w - w / 2;
+				y = (float) ((resy - 1) - yp) / ((float) (resy - 1)) * h - h / 2;
+
 				// ray vector
 
 				rayVx = x - rayEx;
@@ -112,14 +116,11 @@ public class RaytracerProject implements IRayTracerImplementation {
 				rayVz = z - rayEz;
 
 				// get color or null along the ray
-				color = traceRayAndGetColor(rayEx, rayEz, rayEy, rayVx, rayVy, rayVz);
+				color = traceRayAndGetColor(rayEx, rayEy, rayEz, rayVx, rayVy, rayVz);
 
 				if (color != null) {
-					// System.out.println(color);
-					// set pixel with color
 					gui.setPixel(xp, yp, color.getRGB());
 				}
-
 			}
 		}
 	}
@@ -130,18 +131,15 @@ public class RaytracerProject implements IRayTracerImplementation {
 
 		double minT = Float.MAX_VALUE;
 		int minObjectsIndex = -1;
+		int minIndex = -1;
 		float[] minIP = new float[3];
 		float[] minN = new float[3];
 		float[] minMaterial = new float[3];
 		float minMaterialN = 1;
-
 		float bu = 0, bv = 0, bw = 1;
 
 		float[] v = new float[3];
 		float[] l = new float[3];
-
-		// new
-		int minIndex = -1;
 
 		// viewing vector at intersection point
 		v[0] = -rayVx;
@@ -152,8 +150,6 @@ public class RaytracerProject implements IRayTracerImplementation {
 
 		RTFile scene;
 		I_Sphere sphere;
-
-		// new
 		T_Mesh mesh;
 
 		// loop over all scene objects to find the nearest intersection, that
@@ -197,7 +193,7 @@ public class RaytracerProject implements IRayTracerImplementation {
 
 				// calculate first intersection point with sphere along the
 				// ray
-				t = (-b - (float) Math.sqrt(d)) / (2 * a);
+				t = (-b - (float) Math.sqrt(d)) / (float) (2 * a);
 
 				// already a closer intersection point? => next object
 				if (t >= minT)
@@ -333,16 +329,15 @@ public class RaytracerProject implements IRayTracerImplementation {
 							bw = ai[2] / a;
 
 							float nTemp[] = new float[3];
-
 							nTemp[0] = bu * mesh.vertexNormals[mesh.triangles[minIndex][2]][0]
-									+ bv * mesh.vertexNormals[mesh.triangles[minIndex][0]][0] + bw
-											* mesh.vertexNormals[mesh.triangles[minIndex][1]][0];
+									+ bv * mesh.vertexNormals[mesh.triangles[minIndex][0]][0]
+									+ bw * mesh.vertexNormals[mesh.triangles[minIndex][1]][0];
 							nTemp[1] = bu * mesh.vertexNormals[mesh.triangles[minIndex][2]][1]
-									+ bv * mesh.vertexNormals[mesh.triangles[minIndex][0]][1] + bw
-											* mesh.vertexNormals[mesh.triangles[minIndex][1]][1];
+									+ bv * mesh.vertexNormals[mesh.triangles[minIndex][0]][1]
+									+ bw * mesh.vertexNormals[mesh.triangles[minIndex][1]][1];
 							nTemp[2] = bu * mesh.vertexNormals[mesh.triangles[minIndex][2]][2]
-									+ bv * mesh.vertexNormals[mesh.triangles[minIndex][0]][2] + bw
-											* mesh.vertexNormals[mesh.triangles[minIndex][1]][2];
+									+ bv * mesh.vertexNormals[mesh.triangles[minIndex][0]][2]
+									+ bw * mesh.vertexNormals[mesh.triangles[minIndex][1]][2];
 							normalize(nTemp);
 							minN = nTemp;
 
@@ -398,8 +393,8 @@ public class RaytracerProject implements IRayTracerImplementation {
 			switch (mesh.fgp) {
 				case 'f':
 				case 'F':
-					// // illumination can be calculated here
-					// // this is a variant between flat und phong shading
+					// illumination can be calculated here
+					// this is a variant between flat und phong shading
 					// return phongIlluminate(minMaterial, minMaterialN, l, minN, v, Ia, Ids);
 
 					// lookup triangle color of triangle hit
@@ -411,14 +406,14 @@ public class RaytracerProject implements IRayTracerImplementation {
 					// vertex colors
 					float colorf[] = new float[3];
 					colorf[0] = bu * mesh.vertexColors[mesh.triangles[minIndex][2]][0]
-							+ bv * mesh.vertexColors[mesh.triangles[minIndex][0]][0] + bw
-									* mesh.vertexColors[mesh.triangles[minIndex][1]][0];
+							+ bv * mesh.vertexColors[mesh.triangles[minIndex][0]][0]
+							+ bw * mesh.vertexColors[mesh.triangles[minIndex][1]][0];
 					colorf[1] = bu * mesh.vertexColors[mesh.triangles[minIndex][2]][1]
-							+ bv * mesh.vertexColors[mesh.triangles[minIndex][0]][1] + bw
-									* mesh.vertexColors[mesh.triangles[minIndex][1]][1];
+							+ bv * mesh.vertexColors[mesh.triangles[minIndex][0]][1]
+							+ bw * mesh.vertexColors[mesh.triangles[minIndex][1]][1];
 					colorf[2] = bu * mesh.vertexColors[mesh.triangles[minIndex][2]][2]
-							+ bv * mesh.vertexColors[mesh.triangles[minIndex][0]][2] + bw
-									* mesh.vertexColors[mesh.triangles[minIndex][1]][2];
+							+ bv * mesh.vertexColors[mesh.triangles[minIndex][0]][2]
+							+ bw * mesh.vertexColors[mesh.triangles[minIndex][1]][2];
 
 					return new Color(colorf[0] < 1.0f ? colorf[0] : 1.0f, colorf[1] < 1.0f ? colorf[1] : 1.0f,
 							colorf[2] < 1.0f ? colorf[2] : 1.0f);
@@ -433,9 +428,6 @@ public class RaytracerProject implements IRayTracerImplementation {
 		}
 
 		return null;
-		// // intermediate version
-		// Random rd = new Random();
-		// return new Color(rd.nextFloat(), rd.nextFloat(), rd.nextFloat());
 
 	}
 
@@ -478,7 +470,6 @@ public class RaytracerProject implements IRayTracerImplementation {
 				ir += Ids[0] * material[6] * pow;
 				ig += Ids[1] * material[7] * pow;
 				ib += Ids[2] * material[8] * pow;
-
 			}
 		}
 
@@ -516,7 +507,7 @@ public class RaytracerProject implements IRayTracerImplementation {
 		by = p3[1] - p1[1];
 		bz = p3[2] - p1[2];
 
-		// n =a x b
+		// n = a x b
 		fn[0] = ay * bz - az * by;
 		fn[1] = -(ax * bz - az * bx);
 		fn[2] = ax * by - ay * bx;
@@ -538,7 +529,6 @@ public class RaytracerProject implements IRayTracerImplementation {
 	// CAUTION: ai is an output parameter; the referenced object will be
 	// altered!
 	private boolean triangleTest(float[] p, float[] p1, float[] p2, float[] p3, float a, float ai[]) {
-
 		float tmp[] = new float[3];
 
 		ai[0] = calculateN(tmp, p1, p2, p);
@@ -585,41 +575,42 @@ public class RaytracerProject implements IRayTracerImplementation {
 		// left and right
 		if (Math.abs(rayVx) > 1E-5) {
 
-			// left
-			t = (object.min[0] - rayEz) / rayVz;
+			// right yz
+			t = (object.max[0] - rayEx) / rayVx;
 
-			ip[0] = rayEx + t * rayVx;
 			ip[1] = rayEy + t * rayVy;
+			ip[2] = rayEz + t * rayVz;
 
 			if (ip[1] > object.min[1] && ip[1] < object.max[1] && ip[2] > object.min[2] && ip[2] < object.max[2])
 				return true;
-			// right
 
-			t = (object.max[0] - rayEz) / rayVz;
+			// left yz
+			t = (object.min[0] - rayEx) / rayVx;
 
-			ip[0] = rayEx + t * rayVx;
 			ip[1] = rayEy + t * rayVy;
+			ip[2] = rayEz + t * rayVz;
 
 			if (ip[1] > object.min[1] && ip[1] < object.max[1] && ip[2] > object.min[2] && ip[2] < object.max[2])
 				return true;
+
 		}
 		// top and bottom
 		if (Math.abs(rayVy) > 1E-5) {
 
-			// top
-			t = (object.max[1] - rayEz) / rayVz;
+			// top xz
+			t = (object.max[1] - rayEy) / rayVy;
 
 			ip[0] = rayEx + t * rayVx;
-			ip[1] = rayEy + t * rayVy;
+			ip[2] = rayEz + t * rayVz;
 
 			if (ip[0] > object.min[0] && ip[0] < object.max[0] && ip[2] > object.min[2] && ip[2] < object.max[2])
 				return true;
 
-			// bottom
-			t = (object.min[1] - rayEz) / rayVz;
+			// bottom xz
+			t = (object.min[1] - rayEy) / rayVy;
 
 			ip[0] = rayEx + t * rayVx;
-			ip[1] = rayEy + t * rayVy;
+			ip[2] = rayEz + t * rayVz;
 
 			if (ip[0] > object.min[0] && ip[0] < object.max[0] && ip[2] > object.min[2] && ip[2] < object.max[2])
 				return true;
@@ -647,7 +638,6 @@ public class RaytracerProject implements IRayTracerImplementation {
 				mesh.triangleAreas = new float[mesh.triangles.length];
 
 				for (int i = 0; i < mesh.triangles.length; i++) {
-
 					p1 = mesh.vertices[mesh.triangles[i][0]];
 					p2 = mesh.vertices[mesh.triangles[i][1]];
 					p3 = mesh.vertices[mesh.triangles[i][2]];
