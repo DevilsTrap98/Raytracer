@@ -10,6 +10,7 @@ import de.hskl.imst.i.cgma.raytracer.file.I_Sphere;
 import de.hskl.imst.i.cgma.raytracer.file.RTFile;
 import de.hskl.imst.i.cgma.raytracer.file.RTFileReader;
 import de.hskl.imst.i.cgma.raytracer.file.RT_Object;
+import de.hskl.imst.i.cgma.raytracer.file.STL_Mesh;
 import de.hskl.imst.i.cgma.raytracer.file.T_Mesh;
 import de.hskl.imst.i.cgma.raytracer.gui.IRayTracerImplementation;
 import de.hskl.imst.i.cgma.raytracer.gui.RayTracerGui;
@@ -45,7 +46,7 @@ public class RaytracerProject implements IRayTracerImplementation {
 			// "/data/kugel1.dat")));
 			// gui.addObject(RTFileReader.read(T_Mesh.class, new File(directory +
 			// "/data/kugel2.dat")));
-			gui.addObject(RTFileReader.read(T_Mesh.class, new File(directory + "/data/kugel3.dat")));
+			gui.addObject(RTFileReader.read(STL_Mesh.class, new File(directory + "/data/NCC-1701_umgedreht.stl")));
 
 			objects = gui.getObjects();
 
@@ -391,7 +392,6 @@ public class RaytracerProject implements IRayTracerImplementation {
 		if (objects.get(minObjectsIndex) instanceof I_Sphere)
 			return phongIlluminate(minMaterial, minMaterialN, l, minN, v, Ia, Ids);
 
-		// TODO: new
 		// triangle mesh: flat, gouraud or phong shading according to file data
 		else if (objects.get(minObjectsIndex).getHeader() == "TRIANGLE_MESH") {
 			mesh = ((T_Mesh) objects.get(minObjectsIndex));
@@ -500,7 +500,6 @@ public class RaytracerProject implements IRayTracerImplementation {
 		return l;
 	}
 
-	// TODO: new
 	// calculate normalized face normal fn of the triangle p1, p2 and p3
 	// the return value is the area of triangle
 	// CAUTION: fn is an output parameter; the referenced object will be
