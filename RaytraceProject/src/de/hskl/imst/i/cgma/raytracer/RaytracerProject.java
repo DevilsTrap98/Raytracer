@@ -25,7 +25,7 @@ public class RaytracerProject implements IRayTracerImplementation {
 	private float[] Ia = { 0.25f, 0.25f, 0.25f }; // ambient light color
 	private float[] Ids = { 1.0f, 1.0f, 1.0f }; // diffuse and specular light
 	// color
-	private float[] ICenter = { 4.0f, 4.0f, 2.0f }; // center of point light
+	private float[] ICenter = { 0.0f, 4.0f, 2.0f }; // center of point light
 
 	RayTracerGui gui = new RayTracerGui(this);
 
@@ -38,15 +38,8 @@ public class RaytracerProject implements IRayTracerImplementation {
 		try {
 
 			String directory = System.getProperty("user.dir");
-			// gui.addObject(RTFileReader.read(I_Sphere.class, new File(directory +
-			// "/data/ikugel2.dat")));
-			// gui.addObject(RTFileReader.read(T_Mesh.class, new File(directory +
-			// "/data/dreiecke2.dat")));
-			// gui.addObject(RTFileReader.read(T_Mesh.class, new File(directory +
-			// "/data/kugel1.dat")));
-			// gui.addObject(RTFileReader.read(T_Mesh.class, new File(directory +
-			// "/data/kugel2.dat")));
-			gui.addObject(RTFileReader.read(STL_Mesh.class, new File(directory + "/data/NCC-1701_umgedreht.stl")));
+			gui.addObject(RTFileReader.read(STL_Mesh.class, new File(directory +
+					"/data/TodessternEnterpriseScene.stl")));
 
 			objects = gui.getObjects();
 
@@ -82,12 +75,11 @@ public class RaytracerProject implements IRayTracerImplementation {
 		prepareMeshData();
 
 		// hardcoded viewing volume with fovy and near
-		setViewParameters(90.0f, 1.0f); // TODO: change eye/near for image composition?
+		setViewParameters(90.0f, 1.0f);
 		// set eye point
 
 		rayEx = 0.0f;
 		rayEy = 0.0f;
-		// TODO: Auge nach oben bewegen?
 		rayEz = 0.0f;
 
 		z = -near;
