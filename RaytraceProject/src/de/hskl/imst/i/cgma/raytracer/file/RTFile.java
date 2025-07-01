@@ -17,7 +17,6 @@ public abstract class RTFile {
 		return fileName;
 	}
 
-	// TODO: check file reference needed?
 	protected static File currentFile;
 
 	@SuppressWarnings("serial")
@@ -37,7 +36,6 @@ public abstract class RTFile {
 			String header = readLine(br);
 			if (classMapping.containsKey(header))
 				return classMapping.get(header);
-			// TODO: workaround?
 			else if (f.getName().contains(".stl"))
 				return STL_Mesh.class;
 			return null;
@@ -57,7 +55,6 @@ public abstract class RTFile {
 			// check header
 			FileReader fr = new FileReader(f);
 			LineNumberReader br = new LineNumberReader(fr);
-			// TODO: cursed workaround - read STL-File
 			if (!readLine(br).toLowerCase().equals(result.getHeader().toLowerCase())) {
 				if (!f.getName().contains(".stl"))
 					throw new IOException("Ungültiger header");

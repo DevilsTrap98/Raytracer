@@ -107,44 +107,20 @@ public class STL_Mesh extends T_Mesh {
 			for (int i = 0; i < triangleNumber; i++) {
 				System.out.println("Triangle: " + i);
 				// Read Triangle Normal
-				// System.out.println(
-				// Float.intBitsToFloat(readByteNumber(fin, 4)));
-				// System.out.println(
-				// Float.intBitsToFloat(readByteNumber(fin, 4)));
-				// System.out.println(
-				// Float.intBitsToFloat(readByteNumber(fin, 4)));
 				tmpTrianglesNormals.add(new float[] { Float.intBitsToFloat(readByteNumber(fin, 4)),
 						Float.intBitsToFloat(readByteNumber(fin, 4)), Float.intBitsToFloat(readByteNumber(fin, 4)) });
 
 				// Read Vertex 1
-				// System.out.println(
-				// Float.intBitsToFloat(readByteNumber(fin, 4)));
-				// System.out.println(
-				// Float.intBitsToFloat(readByteNumber(fin, 4)));
-				// System.out.println(
-				// Float.intBitsToFloat(readByteNumber(fin, 4)));
 				tmpVertex.add(new float[] { Float.intBitsToFloat(readByteNumber(fin, 4)),
 						Float.intBitsToFloat(readByteNumber(fin, 4)), Float.intBitsToFloat(readByteNumber(fin, 4)) });
 				vertexCount++;
 
 				// Read Vertex 2
-				// System.out.println(
-				// Float.intBitsToFloat(readByteNumber(fin, 4)));
-				// System.out.println(
-				// Float.intBitsToFloat(readByteNumber(fin, 4)));
-				// System.out.println(
-				// Float.intBitsToFloat(readByteNumber(fin, 4)));
 				tmpVertex.add(new float[] { Float.intBitsToFloat(readByteNumber(fin, 4)),
 						Float.intBitsToFloat(readByteNumber(fin, 4)), Float.intBitsToFloat(readByteNumber(fin, 4)) });
 				vertexCount++;
 
 				// Read Vertex 3
-				// System.out.println(
-				// Float.intBitsToFloat(readByteNumber(fin, 4)));
-				// System.out.println(
-				// Float.intBitsToFloat(readByteNumber(fin, 4)));
-				// System.out.println(
-				// Float.intBitsToFloat(readByteNumber(fin, 4)));
 				tmpVertex.add(new float[] { Float.intBitsToFloat(readByteNumber(fin, 4)),
 						Float.intBitsToFloat(readByteNumber(fin, 4)), Float.intBitsToFloat(readByteNumber(fin, 4)) });
 				vertexCount++;
@@ -162,10 +138,6 @@ public class STL_Mesh extends T_Mesh {
 
 		vertices = new float[tmpVertex.size()][3];
 		for (int i = 0; i < tmpVertex.size(); i++) {
-			// TODO: flip Blender coordinate system?
-			// vertices[i][0] = tmpVertex.get(i)[0];
-			// vertices[i][1] = tmpVertex.get(i)[2];
-			// vertices[i][2] = -tmpVertex.get(i)[1] - 30;
 			vertices[i] = tmpVertex.get(i);
 		}
 
@@ -197,7 +169,7 @@ public class STL_Mesh extends T_Mesh {
 						0.8f, 0.8f, 0.8f }
 		};
 
-		fgp = 'p';
+		fgp = 'f';
 
 		calcBoundingBox();
 
